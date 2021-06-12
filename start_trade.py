@@ -4,7 +4,7 @@ written by dev-kim
 !! The responsibility for the investment lies with you
 """
 #from coin_trader import trading_bot
-from coin_trader_v4 import trading_bot
+from coin_trader_v5 import trading_bot
 from datetime import datetime
 import argparse
 
@@ -18,4 +18,4 @@ if __name__ == '__main__':
     bot = trading_bot(args.target_coin)
     if args.auto_recommend:
         print("!=== Auto coin recommendation function ON!")
-    bot.start_trading(args.auto_recommend)
+    bot.start_trading()
