@@ -20,7 +20,7 @@ from utils import get_safe_coin_list, get_top_attention_coin, get_volume_percent
 def get_config():
     conf = edict()
     # === parameter: win
-    conf.unit = 10000
+    conf.unit = 30000
     conf.margin_per = 0.02
     # === parameter: loss
     conf.loss_cut = 0.007
@@ -127,7 +127,7 @@ class trading_bot():
             self.terminate_session()
 
 
-    def cal_ma(self, ticker, interval="minute3", period=50):
+    def cal_ma(self, ticker, interval="minute3", period=15):
         candle_data = pybit.get_ohlcv(ticker, interval)
         closedata = candle_data['close']
         moving_avg = sum(closedata.tolist()[-period:])/period
@@ -152,7 +152,7 @@ class trading_bot():
 
         try:
             while True:
-                current_price = self.session.get_avg_buy_price(self.target_coin)
+                current_price = pybit.get_current_price(self.target_coin)
                 # lost
                 if current_price < loss_price:
                     self.session.sell_market_order(ticker=self.target_coin, volume=volume)
