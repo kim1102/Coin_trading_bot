@@ -2,7 +2,13 @@ import csv
 import requests
 import json
 import pyupbit as pybit
+import jwt
+import os
 from time import sleep
+from urllib.parse import urlencode
+from account_config import get_account
+import uuid
+import  hashlib
 
 def get_safe_coin_list():
     safe_coins = []
@@ -26,15 +32,26 @@ def get_top_attention_coin(total_coin_list):
     for ticker in total_coin_list:
         day_candle = pybit.get_ohlcv(ticker, interval="day")['close']
         attention_score.append(day_candle[-1]/day_candle[-2])
-        sleep(0.3)
+        sleep(0.5)
 
     res = sorted(range(len(attention_score)), key=lambda sub: attention_score[sub])[-10:]
     top_attention_list = [total_coin_list[idx] for idx in res]
 
     return top_attention_list
 
+def get_volume_percentage(ticker, interval="minute1"):
+    day_volume = pybit.get_ohlcv(ticker, interval="day")['volume'][-7:]
+    sleep(0.5)
+    minute_volume = pybit.get_ohlcv(ticker, interval=interval)['volume'].tolist()
+    minute_avg = sum(minute_volume)/len(minute_volume)
+    day_average = sum(((day_volume/24.0)/60.0).tolist())/len(day_volume)
+
+    return minute_avg/day_average
+
 
 if __name__ == '__main__':
-    safe_list = get_safe_coin_list()
-    top_volume = get_top_attention_coin(safe_list)
-    print(top_volume)
+    #safe_list = get_safe_coin_list()
+    #top_volume = get_top_attention_coin(safe_list)
+    #print(top_volume)
+    #get_whole_order_list()
+    get_volume_percentage("KRW-XRP")
