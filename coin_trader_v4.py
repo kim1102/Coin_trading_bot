@@ -2,6 +2,9 @@
 2021-05-19
 written by dev-kim
 Method: RSI-based Martingail
+1. RSI 최저점에서 30 돌파시 매수 진입,
+2. 이후 마틴게일 베팅룰 적용
+3. 횡보장에 적용할 것
 Bug report: devkim1102@gmail.com
 """
 
@@ -14,7 +17,7 @@ from datetime import datetime
 from easydict import EasyDict as edict
 import pandas
 import time
-from utils import get_safe_coin_list
+from utils import get_safe_coin_list, get_top_attention_coin
 
 def get_config():
     conf = edict()
@@ -23,7 +26,7 @@ def get_config():
     conf.margin_per = 0.01
     # === parameter: loss
     conf.loss_cut = 0.01
-    conf.base_candle = "minute5"
+    conf.base_candle = "minute3"
     conf.rsi_thres = 30
 
     # === parameter: else
@@ -100,18 +103,7 @@ class trading_bot():
     def update_coin_list(self):
         self.total_coin_list = get_safe_coin_list()
         sleep(0.5)
-        volume_list = []
-
-        for ticker in self.total_coin_list:
-            df = pybit.get_ohlcv(ticker, self.base_candle)
-            current_volume = int(df.iloc[-1]['volume'])
-            volume_list.append(current_volume)
-            sleep(0.2)
-
-        res = sorted(range(len(volume_list)), key = lambda sub : volume_list[sub])[-30:]
-        candidate_list = [self.total_coin_list[idx] for idx in res]
-
-        self.coin_list = candidate_list
+        self.coin_list = get_top_attention_coin(self.total_coin_list)
 
 
     def stand_by(self, ticker):
@@ -135,13 +127,13 @@ class trading_bot():
                 if search_count == 0:
                     self.update_coin_list()
 
-                if search_count % 20 == 0:
-                    print("[{}] Finding coins suitable for trade".format(datetime.now()) + '.'*int(search_count/20))
+                if search_count % 50 == 0:
+                    print("[{}] Finding coins suitable for trade".format(datetime.now()) + '.'*int(search_count/50))
 
                 if auto: coin_list = random.sample(self.coin_list, 5)
                 else: coin_list = self.coin_list
 
-                search_count = (search_count + 1) % 100
+                search_count = (search_count + 1) % 1000
 
                 for ticker in coin_list:
                     current_rsi = self.cal_rsi(ticker, interval=self.base_candle).iloc[-1]
@@ -153,7 +145,7 @@ class trading_bot():
 
                 if len(target_tickers) > 0:
                     break
-                sleep(random.randrange(1))
+                sleep(1)
         except KeyboardInterrupt:
             self.terminate_session()
 
@@ -243,7 +235,7 @@ class trading_bot():
 
     def reserve_order(self, current_price, volume):
         win_price = pybit.get_tick_size(current_price + current_price * self.margin_per)
-        loss_price = pybit.get_tick_size(current_price - current_price * self.margin_per)
+        loss_price = pybit.get_tick_size(current_price - current_price * self.loss_cut)
         sell_order = self.session.sell_limit_order(ticker=self.target_coin,
                                                    price=win_price,
                                                    volume=volume)
@@ -316,5 +308,4 @@ class trading_bot():
         self.write_log(log)
         log = f'!=== Earning rate: {self.cal_ER():0,.2f}%'
         self.write_log(log)
-        self.log_f.close()
         sys.exit()
