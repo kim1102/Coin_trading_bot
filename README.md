@@ -3,7 +3,7 @@ cryptocurrency trading bot
 
 Bug report: devkim1102@gmail.com
 
-![figure](./fig1.JPG)
+![figure](./fig1.jpg)
 
 ## Installation
 
