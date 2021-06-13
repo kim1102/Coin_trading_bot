@@ -39,7 +39,7 @@ def get_top_attention_coin(total_coin_list):
 
     return top_attention_list
 
-def get_volume_percentage(ticker, interval="minute1"):
+def get_7day_volume_percentage(ticker, interval="minute1"):
     day_volume = pybit.get_ohlcv(ticker, interval="day")['volume'][-7:]
     sleep(0.5)
     minute_volume = pybit.get_ohlcv(ticker, interval=interval)['volume'].tolist()
@@ -49,9 +49,26 @@ def get_volume_percentage(ticker, interval="minute1"):
     return minute_avg/day_average
 
 
+def get_1hour_volume_percentage(ticker, interval="minute1"):
+    minute_volume = pybit.get_ohlcv(ticker, interval=interval)['volume'][-60:].tolist()
+    minute_avg = sum(minute_volume) / len(minute_volume)
+    current_volume = minute_volume[-1]
+
+    return current_volume / minute_avg
+
+
+def get_10min_volume_percentage(ticker, interval="minute1"):
+    minute_volume = pybit.get_ohlcv(ticker, interval=interval)['volume'].tolist()
+    minute_avg = sum(minute_volume[-11:-1]) / 10
+    current_volume = minute_volume[-1]
+
+    return current_volume / minute_avg
+
+
+
 if __name__ == '__main__':
     #safe_list = get_safe_coin_list()
     #top_volume = get_top_attention_coin(safe_list)
     #print(top_volume)
     #get_whole_order_list()
-    get_volume_percentage("KRW-XRP")
+    get_10min_volume_percentage("KRW-XRP")
