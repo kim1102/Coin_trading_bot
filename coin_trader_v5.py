@@ -144,7 +144,7 @@ class trading_bot():
             self.terminate_session()
 
 
-    def cal_ma(self, ticker, interval="minute3", period=50):
+    def cal_ma(self, ticker, interval="minute3", period=30):
         candle_data = pybit.get_ohlcv(ticker, interval)
         closedata = candle_data['close']
         moving_avg = sum(closedata.tolist()[-period:])/period
