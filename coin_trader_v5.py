@@ -26,7 +26,7 @@ def get_config():
     conf.loss_cut = 0.015
     conf.base_candle = "minute3"
     # === parameter: timed out
-    conf.timed_out = 30  # 30minute for waiting
+    conf.timed_out = 60  # 30minute for waiting
 
     # === parameter: entrance gap
     # previous price < moving average(MA) - MA * param &&
