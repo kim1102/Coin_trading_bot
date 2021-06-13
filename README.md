@@ -3,6 +3,7 @@ cryptocurrency trading bot
 
 Bug report: devkim1102@gmail.com
 
+![figure](./fig1.JPG)
 
 ## Installation
 
@@ -26,4 +27,6 @@ python start_trade.py
     * CHANGE: trading bot using RSI-based score
     * ADD: Add `init()`
 * 0.1.5
+    * CHANGE: trading bot moving average V5
+* 0.1.6
     * Work in progress...
