@@ -54,7 +54,7 @@ class trading_bot():
                     ticker = 'KRW-' + ticker
                     buy_price = self.session.get_avg_buy_price(ticker)
                     time.sleep(0.3)
-                    if buy_price - buy_price*self.loss_cut > pybit.get_current_price(ticker):
+                    if buy_price - buy_price*self.loss_cut >= pybit.get_current_price(ticker):
                         volume = self.session.get_balance(ticker)
                         self.sell(ticker, volume)
                         log = f'[Trade complete]=== Earning rate: {self.cal_ER():0,.2f}%'
