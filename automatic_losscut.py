@@ -18,7 +18,7 @@ from utils import get_safe_coin_list, get_top_attention_coin, get_10min_volume_p
 
 def get_config():
     conf = edict()
-    conf.loss_cut = 0.001
+    conf.loss_cut = 0.005
 
     return conf
 
