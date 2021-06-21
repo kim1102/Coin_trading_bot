@@ -60,7 +60,7 @@ class trading_bot():
                         log = f'[Trade complete]=== Earning rate: {self.cal_ER():0,.2f}%'
                         self.write_log(log)
                         break
-                    time.sleep(0.5)
+                    time.sleep(0.3)
 
                 print(f'[Trade complete]=== Earning rate: {self.cal_ER():0,.2f}%')
                 print(datetime.now())
@@ -82,6 +82,12 @@ class trading_bot():
 
 
     def sell(self, ticker, volume):
+        # cancle orders
+        for orders in self.session.get_order(ticker):
+            order_id = orders['uuid']
+            self.session.cancel_order(order_id)
+            sleep(0.3)
+
         ret = self.session.sell_market_order(ticker=ticker, volume=volume)
         while True: # wait until sell process done
             try:
@@ -89,7 +95,7 @@ class trading_bot():
             except:
                 print(self.session.get_order(ticker))
                 continue
-            sleep(0.5)
+            sleep(0.3)
 
         return ret
 
