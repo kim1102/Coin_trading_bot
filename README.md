@@ -1,4 +1,4 @@
-# Coin_trading_bot
+# cryptocurrency_trading_bot
 cryptocurrency trading bot
 
 Bug report: devkim1102@gmail.com
